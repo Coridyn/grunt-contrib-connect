@@ -14,7 +14,7 @@ function get(url, done) {
   });
 }
 
-exports.connect = {
+exports.express = {
   custom_base: function(test) {
     test.expect(2);
     get('http://localhost:8000/fixtures/hello.txt', function(res, body) {
@@ -23,5 +23,12 @@ exports.connect = {
       test.done();
     });
   },
-
+  custom_middleware: function(test) {
+	  test.expect(2);
+	  get('http://localhost:9001/fixtures/hello.txt', function(res, body) {
+		  test.equal(res.statusCode, 200, 'should return 200');
+		  test.equal(body, 'Hello from port 9001', 'should return hello message with port');
+		  test.done();
+	  })
+  }
 };

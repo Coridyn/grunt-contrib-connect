@@ -1,6 +1,6 @@
 /*
- * grunt-contrib-connect
- * http://gruntjs.com/
+ * grunt-wiwo-express
+ * http://widgetworks.com.au/
  *
  * Copyright (c) 2012 "Cowboy" Ben Alman, contributors
  * Licensed under the MIT license.
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       tests: ['test/*_test.js']
     },
 
-    connect: {
+	express: {
       custom_base: {
         options: {
           base: 'test',
@@ -39,10 +39,11 @@ module.exports = function(grunt) {
       custom_middleware: {
         options: {
           port: 9001,
-          middleware: function(connect, options) {
+          middleware: function(express, options) {
             // Return array of whatever middlewares you want
             return [
               function(req, res, next) {
+	            res.locals.testProp = 'test';
                 res.end('Hello from port ' + options.port);
               }
             ];
@@ -58,6 +59,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-internal');
 
-  grunt.registerTask('test', ['connect', 'nodeunit']);
+  grunt.registerTask('test', ['express', 'nodeunit']);
   grunt.registerTask('default', ['jshint', 'test', 'build-contrib']);
 };

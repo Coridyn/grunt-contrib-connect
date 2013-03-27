@@ -1,6 +1,6 @@
 /*
- * grunt-contrib-connect
- * http://gruntjs.com/
+ * grunt-wiwo-express
+ * http://widgetworks.com.au/
  *
  * Copyright (c) 2012 "Cowboy" Ben Alman, contributors
  * Licensed under the MIT license.
@@ -14,9 +14,9 @@ module.exports = function(grunt) {
   var path = require('path');
 
   // External libs.
-  var connect = require('connect');
+  var express = require('express');
 
-  grunt.registerMultiTask('connect', 'Start a connect web server.', function() {
+  grunt.registerMultiTask('express', 'Start an express web server.', function() {
 
     // Merge task-specific options with these defaults.
     var options = this.options({
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
       options.hostname = null;
     }
 
-    var middleware = options.middleware ? options.middleware.call(this, connect, options) : [];
+    var middleware = options.middleware ? options.middleware.call(this, express, options) : [];
 
     // If --debug was specified, enable logging.
     if (grunt.option('debug')) {
@@ -54,7 +54,13 @@ module.exports = function(grunt) {
     // Start server.
     grunt.log.writeln('Starting connect web server on ' + (options.hostname || '*') + ':' + options.port + '.');
 
-    connect.apply(null, middleware)
+	// Add middleware to the express/connect instance.
+	var expressInstance = express();
+	grunt.util._.each(middleware, function (middlewareHandler) {
+		expressInstance.use(middlewareHandler);
+	});
+	
+	expressInstance
       .listen(options.port, options.hostname)
       .on('error', function(err) {
         if (err.code === 'EADDRINUSE') {
